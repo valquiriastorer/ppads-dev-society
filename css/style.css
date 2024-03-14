@@ -364,9 +364,11 @@ img {
 }
 
 .img-area {
-    width: 370px;
-    height: 370px;
-    border-radius: 30%;
+    margin-top: 10px;
+    margin-bottom: 40px;
+    width: 1140px;
+    height: 600px;
+    border-radius: 5%;
     overflow: hidden;
     border: 3px solid rgb(43, 41, 41);
     display: inline-block;
