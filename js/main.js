@@ -1,3 +1,44 @@
+
+
+
+function addBook() {
+    const imageFile = document.getElementById('bookImage').files[0];
+    const title = document.getElementById('bookTitle').value;
+    const author = document.getElementById('bookAuthor').value;
+    const review = document.getElementById('bookReview').value;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const newBookHtml = `
+            <div class="col-md-4 col-sm-6 col-xs-12 single-port design" style="position: relative;">
+                <div class="project-item">
+                    <a href="${e.target.result}" class="zoom1">
+                        <img src="${e.target.result}" alt="portfolio image">
+                        <div class="overlay">
+                            <div class="overlay-inner">
+                                <h4>${title} - ${author}</h4>
+                                <p>${review}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        `;
+
+        const booksDiv = document.getElementById('books');
+        booksDiv.innerHTML += newBookHtml;
+    };
+    reader.readAsDataURL(imageFile);
+}
+
+
+
+
+
+
+
+
+
 $(document).ready(function () {
     'use strict';
 
