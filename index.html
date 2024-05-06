@@ -199,18 +199,31 @@
 
         <div id="addBookForm">
             <h2>Adicione uma nova resenha</h2>
-            <input type="file" id="bookImage" accept="image/*">
-            <input type="text" id="bookTitle" placeholder="Título do Livro">
-            <input type="text" id="bookAuthor" placeholder="Autor(a)">
-            <textarea id="bookReview" placeholder="Escreva sua resenha aqui..."></textarea>
+            <input type="file" id="bookImage" accept="image/*" required>
+            <span class="error-message"></span>
+            <input type="text" id="bookTitle" placeholder="Título do Livro" required>
+            <span class="error-message"></span>
+            <input type="text" id="bookAuthor" placeholder="Autor(a)" required>
+            <span class="error-message"></span>
+            <textarea id="bookReview" placeholder="Escreva sua resenha aqui..." required></textarea>
+            <span class="error-message"></span>
             <button onclick="addBook()">Publicar resenha</button>
+           
         </div>
         <div id="books"></div>
+
+        
+
+        
         
         <div class="container">
             <div class="row port-items" id="books" style="display: flex; flex-wrap: wrap;">
               
             </div>
+        </div>
+
+        <div class="section-title">
+            <h2>EXEMPLOS</h2>
         </div>
 
         <div class="container">
@@ -220,10 +233,12 @@
                         <a href="images/port/livro-the-witcher-a-senhora-do-lado.jpg" class="zoom1">
                             <!--edit image-->
                             <img src="images/port/livro-the-witcher-a-senhora-do-lado.jpg" alt="portfolio image"> <!--edit image-->
+                           
                             <div class="overlay">
                                 <div class="overlay-inner">
                                     <h4>Senhora do Lago - Andrzej Sapkowski</h4>
                                     <p>Enquanto Yeneffer permanece prisioneira e Geralt passa o inverno sob o charme de Fringilla, Ciri é projetada em um mundo paralelo ao penetrar na Torre da Andorinha.</p>
+                                    
                                 </div>
                             </div>
                         </a>
@@ -327,6 +342,69 @@
 
 <!--Portfolio area ends-->
 
+
+<script>
+  function addBook() {
+    const imageFile = document.getElementById('bookImage').files[0];
+    const title = document.getElementById('bookTitle').value.trim();
+    const author = document.getElementById('bookAuthor').value.trim();
+    const review = document.getElementById('bookReview').value.trim();
+
+    if (!imageFile || title === "" || author === "" || review === "") {
+        alert('Por favor, preencha todos os campos e selecione uma imagem antes de adicionar a resenha.');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const booksDiv = document.getElementById('books');
+        const id = 'book' + (booksDiv.children.length + 1); 
+
+        const newBookHtml = `
+            <div class="col-md-4 col-sm-6 col-xs-12 single-port design photography" id="${id}">
+                <div class="project-item">
+                    <img src="${e.target.result}" alt="portfolio image">
+                   
+                    <div class="overlay">
+                        <div class="overlay-inner">
+                            <h4>${title} - ${author}</h4>
+                            <p>${review}</p>
+                            <div style="margin-top: 50px; text-align: center;">
+                                <button onclick="editBook('${id}')" style="margin-right: 10px;">Editar</button>
+                                <button onclick="deleteBook('${id}')">Deletar</button>
+                            </div>
+                        </div>
+                  </div>                    
+                </div>
+            </div>
+            
+        `;
+        booksDiv.innerHTML += newBookHtml;
+    };
+    reader.readAsDataURL(imageFile);
+}
+
+    
+    function editBook(id) {
+        const bookDiv = document.getElementById(id);
+        const title = prompt("Editar o título do livro:", bookDiv.querySelector('h4').textContent.split(' - ')[0]);
+        const author = prompt("Editar o autor do livro:", bookDiv.querySelector('h4').textContent.split(' - ')[1]);
+        const review = prompt("Editar a resenha do livro:", bookDiv.querySelector('p').textContent);
+    
+        if (title !== null && author !== null && review !== null) {
+            bookDiv.querySelector('h4').textContent = `${title} - ${author}`;
+            bookDiv.querySelector('p').textContent = review;
+        }
+    }
+    
+    function deleteBook(id) {
+        const bookDiv = document.getElementById(id);
+        bookDiv.parentNode.removeChild(bookDiv);
+    }
+    
+    </script>
+
+
 <style>
 
 #books {
@@ -350,6 +428,13 @@
     border-radius: 8px;
     background-color: #f8f8f8;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+.error-message {
+    color: red;
+    font-size: 0.8em;
+    display: block;
 }
 
 
@@ -393,66 +478,6 @@
 
 </style>
 
-<script>
-
-function addBook() {
-    const imageFile = document.getElementById('bookImage').files[0];
-    const title = document.getElementById('bookTitle').value.trim();
-    const author = document.getElementById('bookAuthor').value.trim();
-    const review = document.getElementById('bookReview').value.trim();
-
-    if (!imageFile || title === "" || author === "" || review === "") {
-        alert('Por favor, preencha todos os campos e selecione uma imagem antes de adicionar a resenha.');
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        const booksDiv = document.getElementById('books');
-        const id = 'book' + (booksDiv.children.length + 1); 
-
-        const newBookHtml = `
-            <div class="col-md-4 col-sm-6 col-xs-12 single-port design photography" id="${id}">
-                <div class="project-item">
-                    <img src="${e.target.result}" alt="portfolio image">
-                    <div class="overlay">
-                        <div class="overlay-inner">
-                            <h4>${title} - ${author}</h4>
-                            <p>${review}</p>
-                            <button onclick="editBook('${id}')">Editar</button>
-                            <button onclick="deleteBook('${id}')">Deletar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        booksDiv.innerHTML += newBookHtml;
-    };
-    reader.readAsDataURL(imageFile);
-}
-
-
-function editBook(id) {
-    const bookDiv = document.getElementById(id);
-    const title = prompt("Editar o título do livro:", bookDiv.querySelector('h4').textContent.split(' - ')[0]);
-    const author = prompt("Editar o autor do livro:", bookDiv.querySelector('h4').textContent.split(' - ')[1]);
-    const review = prompt("Editar a resenha do livro:", bookDiv.querySelector('p').textContent);
-
-    if (title !== null && author !== null && review !== null) {
-        bookDiv.querySelector('h4').textContent = `${title} - ${author}`;
-        bookDiv.querySelector('p').textContent = review;
-    }
-}
-
-function deleteBook(id) {
-    const bookDiv = document.getElementById(id);
-    bookDiv.parentNode.removeChild(bookDiv);
-}
-
-
-
-
-</script>
 
 <!--Latest version JQuery-->
 <script src="js/jquery-3.2.1.min.js"></script>
