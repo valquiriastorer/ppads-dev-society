@@ -344,46 +344,65 @@
 
 
 <script>
-  function addBook() {
-    const imageFile = document.getElementById('bookImage').files[0];
-    const title = document.getElementById('bookTitle').value.trim();
-    const author = document.getElementById('bookAuthor').value.trim();
-    const review = document.getElementById('bookReview').value.trim();
-
-    if (!imageFile || title === "" || author === "" || review === "") {
-        alert('Por favor, preencha todos os campos e selecione uma imagem antes de adicionar a resenha.');
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        const booksDiv = document.getElementById('books');
-        const id = 'book' + (booksDiv.children.length + 1); 
-
-        const newBookHtml = `
-            <div class="col-md-4 col-sm-6 col-xs-12 single-port design photography" id="${id}">
-                <div class="project-item">
-                    <img src="${e.target.result}" alt="portfolio image">
-                   
-                    <div class="overlay">
-                        <div class="overlay-inner">
-                            <h4>${title} - ${author}</h4>
-                            <p>${review}</p>
-                            <div style="margin-top: 50px; text-align: center;">
-                                <button onclick="editBook('${id}')" style="margin-right: 10px;">Editar</button>
-                                <button onclick="deleteBook('${id}')">Deletar</button>
+    function addBook() {
+        const imageFile = document.getElementById('bookImage').files[0];
+        const title = document.getElementById('bookTitle').value.trim();
+        const author = document.getElementById('bookAuthor').value.trim();
+        const review = document.getElementById('bookReview').value.trim();
+    
+        if (!imageFile || title === "" || author === "" || review === "") {
+            alert('Por favor, preencha todos os campos e selecione uma imagem antes de adicionar a resenha.');
+            return;
+        }
+    
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const booksDiv = document.getElementById('books');
+            const id = 'book' + (booksDiv.children.length + 1);
+            const previewLength = 100;  // Limite de caracteres na prévia
+            const previewText = review.length > previewLength ? review.substring(0, previewLength) + '...' : review;
+    
+            const newBookHtml = `
+                <div class="col-md-4 col-sm-6 col-xs-12 single-port design photography" id="${id}">
+                    <div class="project-item">
+                        <img src="${e.target.result}" alt="portfolio image">
+                       
+                        <div class="overlay">
+                            <div class="overlay-inner">
+                                <h4>${title} - ${author}</h4>
+                                <p>${previewText}</p>
+                                <div style="margin-top: 50px; text-align: center;">
+                                    <button onclick="viewFullReview('${id}', \`${review}\`)">Visualizar resenha</button>
+                                    <button onclick="editBook('${id}')" style="margin-right: 10px;">Editar</button>
+                                    <button onclick="deleteBook('${id}')">Deletar</button>                                  
+                                </div>
                             </div>
-                        </div>
-                  </div>                    
+                        </div>                    
+                    </div>
                 </div>
+            `;
+            booksDiv.innerHTML += newBookHtml;
+        };
+        reader.readAsDataURL(imageFile);
+    }
+    
+    function viewFullReview(id, fullReview) {
+        const reviewModal = document.createElement('div');
+        reviewModal.id = id + 'modal';
+        reviewModal.className = 'review-modal';
+        reviewModal.innerHTML = `
+            <div class="review-modal-content">
+                <span class="close" onclick="closeReviewModal('${id + 'modal'}')">&times;</span>
+                <p>${fullReview}</p>
             </div>
-            
         `;
-        booksDiv.innerHTML += newBookHtml;
-    };
-    reader.readAsDataURL(imageFile);
-}
-
+        document.body.appendChild(reviewModal);
+    }
+    
+    function closeReviewModal(modalId) {
+        const modal = document.getElementById(modalId);
+        document.body.removeChild(modal);
+    }
     
     function editBook(id) {
         const bookDiv = document.getElementById(id);
@@ -401,8 +420,8 @@
         const bookDiv = document.getElementById(id);
         bookDiv.parentNode.removeChild(bookDiv);
     }
-    
     </script>
+    
 
 
 <style>
@@ -456,7 +475,7 @@
 }
 
 #addBookForm textarea {
-    height: 100px; 
+    height: 150px; 
     resize: none; 
 }
 
@@ -474,6 +493,41 @@
 
 #addBookForm button:hover {
     background-color: blue;
+}
+
+.review-modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.review-modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    width: 50%;
+    overflow: auto;
+}
+
+.close {
+    color: gray;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 </style>
