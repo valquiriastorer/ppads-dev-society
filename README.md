@@ -1,4 +1,4 @@
-# Entrelinhas - Site de resenha de livros
+# Dev Society - Site de resenha de livros
 ## Projeto para a disciplina de Prática Profissional de Análise e Desenvolvimento de Sistemas
 Grupo Dev Society:
 - JEAN MICHEL FOGACA
